@@ -1,2 +1,0 @@
-# Doge-Suck-New
-Bot
