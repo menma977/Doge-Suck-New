@@ -156,13 +156,10 @@ class HomeActivity : AppCompatActivity() {
             goTo = Intent(this, FibonacciActivity::class.java)
             startActivity(goTo)
         }
-<<<<<<< HEAD
 
         flyFibonacci.setOnClickListener {
             //todo: Add flyFibonacci
         }
-=======
->>>>>>> master
     }
 
     private fun getTypeUser() {

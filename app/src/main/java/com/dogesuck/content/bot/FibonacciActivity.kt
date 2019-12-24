@@ -227,10 +227,7 @@ class FibonacciActivity : AppCompatActivity() {
         val seed = format.format((0..99999).random())
         val session = user.sessionDoge
         val jumper = 0
-<<<<<<< HEAD
         //todo: Add Bot System from old Bot
-=======
->>>>>>> master
     }
 
     private fun configChart() {
