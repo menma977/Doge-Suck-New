@@ -33,7 +33,6 @@ class LabouchereActivity : AppCompatActivity() {
     private lateinit var starterLinearLayout: LinearLayout
     private lateinit var username: TextView
     private lateinit var balance: TextView
-    private lateinit var contentStarter: LinearLayout
     private lateinit var targetBalance: TextView
     private lateinit var percent: EditText
     private lateinit var suck: Button
@@ -50,10 +49,8 @@ class LabouchereActivity : AppCompatActivity() {
     private var row = 0
     private var win = false
     private lateinit var basePayInValue: BigDecimal
-    private lateinit var basePayInValueMirror: BigDecimal
     private var targetBalanceValue = 0.0
     private lateinit var maxPayInValue: BigDecimal
-    private lateinit var maxPayInValueMirror: BigDecimal
     private var labour: ArrayList<Double> = ArrayList()
     private var payIn: Double = 0.0
     private var payInDefault: Double = 0.0
@@ -81,7 +78,6 @@ class LabouchereActivity : AppCompatActivity() {
         balance = findViewById(R.id.balanceTextView)
         targetBalance = findViewById(R.id.targetTextView)
         starterLinearLayout = findViewById(R.id.starterLinearLayout)
-        contentStarter = findViewById(R.id.starterLinearLayout)
         percent = findViewById(R.id.percentEditText)
         suck = findViewById(R.id.StarterButton)
         stopButton = findViewById(R.id.StopButton)
@@ -136,6 +132,7 @@ class LabouchereActivity : AppCompatActivity() {
         }
 
         suck.setOnClickListener {
+            onStop = false
             starterLinearLayout.visibility = View.INVISIBLE
             suck.visibility = View.INVISIBLE
             if (percent.text.isEmpty()) {
@@ -151,10 +148,7 @@ class LabouchereActivity : AppCompatActivity() {
                     balance.text.toString().toDouble() + ((balance.text.toString().toDouble() * percent.text.toString().toInt()) / 100)
                 maxPayInValue = (basePayInValue * (1000).toBigDecimal())
                 targetBalance.text = formatLot.format(targetBalanceValue)
-                basePayInValueMirror = basePayInValue
-                maxPayInValueMirror = maxPayInValue
                 labour.add(payIn)
-                payInDefault = payIn
                 bot()
             }
         }
@@ -170,12 +164,12 @@ class LabouchereActivity : AppCompatActivity() {
         val loop = 30
         val seed = format.format((0..99999).random())
         val session = user.sessionDoge
+        payInDefault = payIn
         Timer().schedule(1000, 1000) {
             try {
                 if (onStop) {
                     this.cancel()
                 }
-
                 runOnUiThread {
                     if (win) {
                         payIn = try {
@@ -219,7 +213,6 @@ class LabouchereActivity : AppCompatActivity() {
 
                     if (balance.text.toString().toBigDecimal() > targetBalanceValue.toBigDecimal()) {
                         this.cancel()
-                        row = 0
                         starterLinearLayout.visibility = View.VISIBLE
                         suck.visibility = View.VISIBLE
                     }
@@ -234,7 +227,6 @@ class LabouchereActivity : AppCompatActivity() {
                 e.printStackTrace()
                 println(e)
                 this.cancel()
-                row = 0
                 runOnUiThread {
                     starterLinearLayout.visibility = View.VISIBLE
                     suck.visibility = View.VISIBLE

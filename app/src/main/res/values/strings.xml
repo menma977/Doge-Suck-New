@@ -43,4 +43,6 @@
     <string name="target">Target</string>
     <string name="percent_text">Percent</string>
     <string name="stop">Stop</string>
+    <string name="level_of_courage">Level Of Courage</string>
+    <string name="drag_to_increase_your_level_of_courage">drag to increase your level of courage (recommendation: 1%)</string>
 </resources>

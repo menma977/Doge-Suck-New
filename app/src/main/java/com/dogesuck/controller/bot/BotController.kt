@@ -76,7 +76,9 @@ class BotController {
         private var basePayIn: String,
         private var maxPayIn: String,
         private var seed: String,
-        private var maxBait: String = "200"
+        private var maxBait: String = "200",
+        private var low: String = "0",
+        private var high: String = "499999"
     ) :
         AsyncTask<Void, Void, JSONObject>() {
         override fun doInBackground(vararg params: Void?): JSONObject {
@@ -94,8 +96,8 @@ class BotController {
                 body["a"] = "PlaceAutomatedBets"
                 body["s"] = session
                 body["BasePayIn"] = basePayIn
-                body["Low"] = "0"
-                body["High"] = "499999"
+                body["Low"] = low
+                body["High"] = high
                 body["MaxBets"] = maxBait
                 body["ResetOnWin"] = "1"
                 body["ResetOnLose"] = "0"

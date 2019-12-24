@@ -7,9 +7,7 @@ import android.view.View
 import android.widget.*
 import com.dogesuck.LoginActivity
 import com.dogesuck.R
-import com.dogesuck.content.bot.ClassicActivity
-import com.dogesuck.content.bot.LabouchereActivity
-import com.dogesuck.content.bot.ManualBotActivity
+import com.dogesuck.content.bot.*
 import com.dogesuck.controller.UserController
 import com.dogesuck.model.Loading
 import com.dogesuck.model.User
@@ -147,6 +145,20 @@ class HomeActivity : AppCompatActivity() {
         labouchere.setOnClickListener {
             goTo = Intent(this, LabouchereActivity::class.java)
             startActivity(goTo)
+        }
+
+        reverseLabouchere.setOnClickListener {
+            goTo = Intent(this, ReverseLabouchereActivity::class.java)
+            startActivity(goTo)
+        }
+
+        fibonacci.setOnClickListener {
+            goTo = Intent(this, FibonacciActivity::class.java)
+            startActivity(goTo)
+        }
+
+        flyFibonacci.setOnClickListener {
+            //todo: Add flyFibonacci
         }
     }
 
