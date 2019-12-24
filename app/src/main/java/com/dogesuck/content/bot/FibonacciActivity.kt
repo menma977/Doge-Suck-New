@@ -14,26 +14,28 @@ import com.anychart.data.Set
 import com.anychart.enums.TooltipPositionMode
 import com.dogesuck.R
 import com.dogesuck.controller.UserController
-import com.dogesuck.controller.bot.BotController
 import com.dogesuck.model.Config
 import com.dogesuck.model.Loading
 import com.dogesuck.model.User
-import kotlinx.android.synthetic.main.activity_classic.*
 import org.json.JSONObject
 import java.lang.Exception
 import java.math.BigDecimal
 import java.text.DecimalFormat
 import java.util.*
+import kotlin.collections.ArrayList
 import kotlin.concurrent.schedule
 
-class ClassicActivity : AppCompatActivity() {
+class FibonacciActivity : AppCompatActivity() {
 
     private lateinit var anyChartView: AnyChartView
-    private lateinit var starterLinearLayout: LinearLayout
+    private lateinit var arrayText: TextView
     private lateinit var username: TextView
     private lateinit var balance: TextView
     private lateinit var targetBalance: TextView
+    private lateinit var starterLinearLayout: LinearLayout
     private lateinit var percent: EditText
+    private lateinit var seekBar: SeekBar
+    private lateinit var descriptionSeekBarTextView: TextView
     private lateinit var suck: Button
     private lateinit var stopButton: Button
     private lateinit var cartesian: Cartesian
@@ -46,45 +48,54 @@ class ClassicActivity : AppCompatActivity() {
     private var formatLot = DecimalFormat("#.#########")
     private var onStop = false
     private var row = 0
-    private var lose = 0
+    private lateinit var formatLevelOfCourage: String
+    private var levelOfCourageValue = 1
     private lateinit var basePayInValue: BigDecimal
-    private lateinit var basePayInValueMirror: BigDecimal
     private var targetBalanceValue = 0.0
     private lateinit var maxPayInValue: BigDecimal
-    private lateinit var maxPayInValueMirror: BigDecimal
+    private var fibonacciArray = ArrayList<Int>()
 
     override fun onBackPressed() {
         super.onBackPressed()
-        onStop = true
+        stopBot()
         row = 0
         finishAndRemoveTask()
     }
 
     override fun onStop() {
         super.onStop()
-        onStop = true
+        stopBot()
         row = 0
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_classic)
+        setContentView(R.layout.activity_fibonacci)
 
         loading = Loading(this)
         user = User(this)
+        anyChartView = findViewById(R.id.chart)
+        arrayText = findViewById(R.id.arrayTextView)
         username = findViewById(R.id.usernameTextView)
         balance = findViewById(R.id.balanceTextView)
         targetBalance = findViewById(R.id.targetTextView)
         starterLinearLayout = findViewById(R.id.starterLinearLayout)
         percent = findViewById(R.id.percentEditText)
+        seekBar = findViewById(R.id.seekBar)
+        descriptionSeekBarTextView = findViewById(R.id.DescriptionSeekBarTextView)
         suck = findViewById(R.id.StarterButton)
         stopButton = findViewById(R.id.StopButton)
-        anyChartView = findViewById(R.id.chart)
+
+        setValueFibonacci()
+
+        formatLevelOfCourage =
+            "${getString(R.string.level_of_courage)} : ${(seekBar.progress.toString().toInt() + 1)}%"
+        descriptionSeekBarTextView.text = formatLevelOfCourage
+        percent.setText("1")
         cartesian = AnyChart.line()
         cartesian.background().fill("#000")
         configChart()
         anyChartView.setChart(cartesian)
-        percent.setText("1")
 
         loading.openDialog()
 
@@ -99,6 +110,12 @@ class ClassicActivity : AppCompatActivity() {
                         username.text = user.username
                         balance.text = floatBalance
                         targetBalance.text = targetBalanceValue.toString()
+                        val jsonObject = JSONObject()
+                        jsonObject.put(
+                            "value",
+                            formatDouble.format(balanceResponse.toDouble() * 0.00000001)
+                        )
+                        set.append(jsonObject.toString())
                         loading.closeDialog()
                     } else {
                         Toast.makeText(
@@ -110,6 +127,7 @@ class ClassicActivity : AppCompatActivity() {
                         finishAndRemoveTask()
                     }
                 } catch (e: Exception) {
+                    e.printStackTrace()
                     Toast.makeText(
                         applicationContext,
                         "Your connection has been lost. Please come back when the connection is stable",
@@ -121,6 +139,18 @@ class ClassicActivity : AppCompatActivity() {
             }
         }
 
+        seekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
+                formatLevelOfCourage =
+                    "${getString(R.string.level_of_courage)} : ${(progress + 1)}%"
+                descriptionSeekBarTextView.text = formatLevelOfCourage
+                levelOfCourageValue = progress + 1
+            }
+
+            override fun onStartTrackingTouch(seekBar: SeekBar?) {}
+            override fun onStopTrackingTouch(seekBar: SeekBar?) {}
+        })
+
         suck.setOnClickListener {
             onStop = false
             starterLinearLayout.visibility = View.INVISIBLE
@@ -130,105 +160,73 @@ class ClassicActivity : AppCompatActivity() {
             } else if (!percent.text.isDigitsOnly()) {
                 Toast.makeText(this, "Percent must number only", Toast.LENGTH_SHORT).show()
             } else {
-                when (val percentage = percent.text.toString().toInt()) {
-                    in 1..2 -> {
-                        basePayInValue =
-                            Config().getOnPercentValue((balance.text.toString().toDouble() * 0.00000001))
-                                .toBigDecimal()
-                        targetBalanceValue =
-                            balance.text.toString().toDouble() + ((balance.text.toString().toDouble() * percentage) / 100)
-                    }
-                    in 2..3 -> {
-                        basePayInValue =
-                            Config().getThreePercentValue((balance.text.toString().toDouble() * 0.00000001))
-                                .toBigDecimal()
-                        targetBalanceValue =
-                            balance.text.toString().toDouble() + ((balance.text.toString().toDouble() * percentage) / 100)
-                    }
-                    else -> {
-                        basePayInValue =
-                            Config().getFivePercentValue((balance.text.toString().toDouble() * 0.00000001))
-                                .toBigDecimal()
-                        targetBalanceValue =
-                            balance.text.toString().toDouble() + ((balance.text.toString().toDouble() * percentage) / 100)
-                    }
-                }
+                basePayInValue =
+                    (Config().getLabor(balance.text.toString().toDouble() * 0.00000001) * 10).toBigDecimal()
+                targetBalanceValue =
+                    balance.text.toString().toDouble() + ((balance.text.toString().toDouble() * percent.text.toString().toInt()) / 100)
                 maxPayInValue = (basePayInValue * (1000).toBigDecimal())
                 targetBalance.text = formatLot.format(targetBalanceValue)
-                basePayInValueMirror = basePayInValue
-                maxPayInValueMirror = maxPayInValue
+                when (levelOfCourageValue) {
+                    2 -> {
+                        basePayInValue *= (5).toBigDecimal()
+                    }
+                    3 -> {
+                        basePayInValue *= (10).toBigDecimal()
+                    }
+                    else -> {
+                        basePayInValue
+                    }
+                }
+
                 bot()
             }
         }
 
         stopButton.setOnClickListener {
-            onStop = true
+            stopBot()
+            seekBar.isEnabled = true
             starterLinearLayout.visibility = View.VISIBLE
             suck.visibility = View.VISIBLE
         }
     }
 
+    private fun setValueFibonacci() {
+        fibonacciArray.add(1)
+        fibonacciArray.add(1)
+        fibonacciArray.add(2)
+        fibonacciArray.add(3)
+        fibonacciArray.add(5)
+        fibonacciArray.add(8)
+        fibonacciArray.add(13)
+        fibonacciArray.add(21)
+        fibonacciArray.add(34)
+        fibonacciArray.add(55)
+        fibonacciArray.add(89)
+        fibonacciArray.add(144)
+        fibonacciArray.add(233)
+        fibonacciArray.add(377)
+        fibonacciArray.add(610)
+        fibonacciArray.add(987)
+        fibonacciArray.add(1597)
+        fibonacciArray.add(2584)
+        fibonacciArray.add(4181)
+        fibonacciArray.add(6765)
+        fibonacciArray.add(10946)
+        fibonacciArray.add(17711)
+        fibonacciArray.add(28657)
+        fibonacciArray.add(46368)
+        fibonacciArray.add(75025)
+        fibonacciArray.add(121393)
+        fibonacciArray.add(196418)
+        fibonacciArray.add(317811)
+        fibonacciArray.add(514229)
+    }
+
     private fun bot() {
         val loop = 30
-        Timer().schedule(1000, 1000) {
-            if (onStop) {
-                this.cancel()
-            }
-            runOnUiThread {
-                try {
-                    if (lose > 0) {
-                        basePayInValue *= (10).toBigDecimal()
-                        maxPayInValue *= (10).toBigDecimal()
-                        lose--
-                    } else {
-                        basePayInValue = basePayInValueMirror
-                        maxPayInValue = maxPayInValueMirror
-                    }
-                    if (balance.text.toString().toBigDecimal() > targetBalanceValue.toBigDecimal()) {
-                        this.cancel()
-                        row = 0
-                        starterLinearLayout.visibility = View.VISIBLE
-                        suck.visibility = View.VISIBLE
-                    }
-                    val seed = format.format((0..99999).random())
-                    response = BotController.ClassicBot(
-                        user.sessionDoge,
-                        basePayInValue.toString(),
-                        maxPayInValue.toString(),
-                        seed
-                    ).execute().get()
-                    val responsePayIn = response["PayIn"].toString().toBigDecimal()
-                    val responsePayOut = response["PayOut"].toString().toBigDecimal()
-                    val responseProfit = (responsePayOut + responsePayIn)
-                    val responseBalance =
-                        balance.text.toString().toBigDecimal() + (responseProfit * (0.00000001).toBigDecimal())
-                    val jsonObject = JSONObject()
-                    jsonObject.put(
-                        "value",
-                        formatDouble.format(responseBalance)
-                    )
-                    set.append(jsonObject.toString())
-                    balance.text = formatLot.format(responseBalance)
-                    when {
-                        responseProfit < (0).toBigDecimal() -> {
-                            lose = 2
-                        }
-                    }
-                    when {
-                        row > loop -> {
-                            set.remove(0)
-                        }
-                    }
-                    row++
-                } catch (e: Exception) {
-                    e.printStackTrace()
-                    this.cancel()
-                    row = 0
-                    starterLinearLayout.visibility = View.VISIBLE
-                    suck.visibility = View.VISIBLE
-                }
-            }
-        }
+        val seed = format.format((0..99999).random())
+        val session = user.sessionDoge
+        val jumper = 0
     }
 
     private fun configChart() {
@@ -246,5 +244,9 @@ class ClassicActivity : AppCompatActivity() {
         cartesian.legend().enabled(true)
         cartesian.legend().fontSize(13.0)
         cartesian.legend().padding(0.0)
+    }
+
+    private fun stopBot() {
+        onStop = true
     }
 }
