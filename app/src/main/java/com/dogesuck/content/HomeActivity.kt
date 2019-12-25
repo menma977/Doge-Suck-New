@@ -158,7 +158,13 @@ class HomeActivity : AppCompatActivity() {
         }
 
         flyFibonacci.setOnClickListener {
-            //todo: Add flyFibonacci
+            goTo = Intent(this, FlyFibonacciActivity::class.java)
+            startActivity(goTo)
+        }
+
+        custom.setOnClickListener {
+            goTo = Intent(this, CustomActivity::class.java)
+            startActivity(goTo)
         }
     }
 

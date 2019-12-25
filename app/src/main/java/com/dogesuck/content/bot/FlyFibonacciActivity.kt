@@ -26,7 +26,7 @@ import java.util.*
 import kotlin.collections.ArrayList
 import kotlin.concurrent.schedule
 
-class FibonacciActivity : AppCompatActivity() {
+class FlyFibonacciActivity : AppCompatActivity() {
 
     private lateinit var anyChartView: AnyChartView
     private lateinit var username: TextView
@@ -70,7 +70,7 @@ class FibonacciActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_fibonacci)
+        setContentView(R.layout.activity_fly_fibonacci)
 
         loading = Loading(this)
         user = User(this)
@@ -176,7 +176,6 @@ class FibonacciActivity : AppCompatActivity() {
                         basePayInValue
                     }
                 }
-
                 bot()
             }
         }
@@ -195,22 +194,33 @@ class FibonacciActivity : AppCompatActivity() {
         val session = user.sessionDoge
         var jumper = 0
         var lose = false
-        var payIn: BigDecimal = (0).toBigDecimal()
+        var low: Int
+        var high: Int
+        var payIn: BigDecimal
+        var highBalance = balanceTextView.text.toString().toBigDecimal()
         Timer().schedule(1000, 1000) {
             if (onStop) {
                 this.cancel()
             }
-            jumper = if (lose) {
-                if (jumper >= (fibonacciArray.size - 1)) {
-                    fibonacciArray.size - 1
-                } else {
-                    jumper + 3
-                }
+            if (lose) {
+                lose = false
+                low = 250000
+                high = 999999
             } else {
-                if (jumper == 0) {
-                    0
+                low = 0
+                high = 749999
+            }
+            if (balanceTextView.text.toString().toBigDecimal() > highBalance) {
+                jumper = 0
+                highBalance = balanceTextView.text.toString().toBigDecimal()
+            } else {
+                if (jumper >= (fibonacciArray.size - 1)) {
+                    jumper = fibonacciArray.size - 1
                 } else {
-                    jumper - 1
+                    jumper++
+                }
+                if (jumper == (fibonacciArray.size - 1)) {
+                    jumper = 0
                 }
             }
             payIn =
@@ -219,9 +229,10 @@ class FibonacciActivity : AppCompatActivity() {
             response =
                 BotController.ManualBot(
                     session,
-                    "899999",
+                    high.toString(),
                     format.format(payIn),
-                    seed.toString()
+                    seed.toString(),
+                    low.toString()
                 ).execute().get()
 
             runOnUiThread {

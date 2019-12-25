@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/Black"
-    tools:context=".content.bot.FibonacciActivity">
+    tools:context=".content.bot.FlyFibonacciActivity">
 
     <LinearLayout
         android:layout_width="match_parent"
