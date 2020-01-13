@@ -1,15 +1,12 @@
 package com.dogesuck.controller
 
-import android.app.Activity
 import android.os.AsyncTask
 import com.dogesuck.R
 import com.dogesuck.model.Url
-import com.dogesuck.model.User
 import org.json.JSONObject
 import java.io.BufferedReader
 import java.io.DataOutputStream
 import java.io.InputStreamReader
-import java.lang.Exception
 import java.net.HttpURLConnection
 import java.net.URL
 

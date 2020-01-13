@@ -195,7 +195,7 @@ class FibonacciActivity : AppCompatActivity() {
         val session = user.sessionDoge
         var jumper = 0
         var lose = false
-        var payIn: BigDecimal = (0).toBigDecimal()
+        var payIn = (0).toBigDecimal()
         Timer().schedule(1000, 1000) {
             if (onStop) {
                 this.cancel()

@@ -53,8 +53,6 @@ class HomeActivity : AppCompatActivity() {
     private lateinit var classic: Button
     private lateinit var classic2: Button
     private lateinit var martiAngelCustom: Button
-    private lateinit var custom: Button
-    private lateinit var custom2: Button
     private var formatLot = DecimalFormat("#.#########")
     private var isFABOpen = true
 
@@ -93,8 +91,6 @@ class HomeActivity : AppCompatActivity() {
         classic = findViewById(R.id.classicButton)
         classic2 = findViewById(R.id.classic2Button)
         martiAngelCustom = findViewById(R.id.martiAngelCustomButton)
-        custom = findViewById(R.id.customButton)
-        custom2 = findViewById(R.id.custom2Button)
         loading.openDialog()
 
         fab.setOnClickListener {
@@ -162,8 +158,13 @@ class HomeActivity : AppCompatActivity() {
             startActivity(goTo)
         }
 
-        custom.setOnClickListener {
+        classic2.setOnClickListener {
             goTo = Intent(this, CustomActivity::class.java)
+            startActivity(goTo)
+        }
+
+        martiAngelCustom.setOnClickListener {
+            goTo = Intent(this, MartiAngelActivity::class.java)
             startActivity(goTo)
         }
     }
@@ -195,8 +196,6 @@ class HomeActivity : AppCompatActivity() {
             classic.isEnabled = false
             classic2.isEnabled = false
             martiAngelCustom.isEnabled = false
-            custom.isEnabled = false
-            custom2.isEnabled = false
             loading.closeDialog()
         }
     }
@@ -253,8 +252,6 @@ class HomeActivity : AppCompatActivity() {
                     classic.isEnabled = false
                     classic2.isEnabled = false
                     martiAngelCustom.isEnabled = false
-                    custom.isEnabled = false
-                    custom2.isEnabled = false
                 }
                 loading.closeDialog()
             }

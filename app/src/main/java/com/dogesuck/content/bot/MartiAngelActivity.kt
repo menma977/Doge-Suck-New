@@ -1,5 +1,6 @@
 package com.dogesuck.content.bot
 
+import android.annotation.SuppressLint
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
@@ -24,19 +25,18 @@ import java.text.DecimalFormat
 import java.util.*
 import kotlin.concurrent.schedule
 
-class CustomActivity : AppCompatActivity() {
+class MartiAngelActivity : AppCompatActivity() {
 
-    private lateinit var username: TextView
-    private lateinit var balance: TextView
-    private lateinit var targetBalance: TextView
-    private lateinit var probability: EditText
-    private lateinit var dfi: EditText
-    private lateinit var size: EditText
-    private lateinit var capacity: EditText
-    private lateinit var stopLose: EditText
-    private lateinit var target: EditText
     private lateinit var anyChartView: AnyChartView
     private lateinit var starterLinearLayout: LinearLayout
+    private lateinit var username: TextView
+    private lateinit var balanceTextView: TextView
+    private lateinit var targetBalance: TextView
+    private lateinit var multiPlay: EditText
+    private lateinit var size: EditText
+    private lateinit var probability: EditText
+    private lateinit var stopLose: EditText
+    private lateinit var target: EditText
     private lateinit var startButton: Button
     private lateinit var stopButton: Button
     private lateinit var cartesian: Cartesian
@@ -50,6 +50,7 @@ class CustomActivity : AppCompatActivity() {
     private var onStop = false
     private var row = 0
     private var targetBalanceValue = 0.0
+    private lateinit var basePayIn: BigDecimal
 
     override fun onBackPressed() {
         super.onBackPressed()
@@ -66,19 +67,19 @@ class CustomActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_custom)
+        setContentView(R.layout.activity_marti_angel)
 
         username = findViewById(R.id.usernameTextView)
-        balance = findViewById(R.id.balanceTextView)
+        balanceTextView = findViewById(R.id.balanceTextView)
         targetBalance = findViewById(R.id.targetTextView)
         probability = findViewById(R.id.probabilityEditText)
-        dfi = findViewById(R.id.dfiEditText)
-        size = findViewById(R.id.sizeEditText)
-        capacity = findViewById(R.id.capacityEditText)
+        multiPlay = findViewById(R.id.multiPlayEditText)
         stopLose = findViewById(R.id.stopLoseEditText)
         target = findViewById(R.id.targetEditText)
+        size = findViewById(R.id.sizeEditText)
         startButton = findViewById(R.id.StarterButton)
         stopButton = findViewById(R.id.StopButton)
+
         starterLinearLayout = findViewById(R.id.starterLinearLayout)
         anyChartView = findViewById(R.id.chart)
 
@@ -100,8 +101,14 @@ class CustomActivity : AppCompatActivity() {
                     if (balanceResponse.toDouble() > 0) {
                         val floatBalance = formatLot.format(balanceResponse.toDouble() * 0.00000001)
                         username.text = user.username
-                        balance.text = floatBalance
+                        balanceTextView.text = floatBalance
                         targetBalance.text = targetBalanceValue.toString()
+                        val jsonObject = JSONObject()
+                        jsonObject.put(
+                            "value",
+                            formatDouble.format(balanceResponse.toDouble() * 0.00000001)
+                        )
+                        set.append(jsonObject.toString())
                         loading.closeDialog()
                     } else {
                         Toast.makeText(
@@ -113,6 +120,7 @@ class CustomActivity : AppCompatActivity() {
                         finishAndRemoveTask()
                     }
                 } catch (e: Exception) {
+                    e.printStackTrace()
                     Toast.makeText(
                         applicationContext,
                         "Your connection has been lost. Please come back when the connection is stable",
@@ -126,40 +134,89 @@ class CustomActivity : AppCompatActivity() {
 
         startButton.setOnClickListener {
             if (probability.text.isEmpty()) {
-                Toast.makeText(this, "Probability can not be empty", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "probability can not be empty", Toast.LENGTH_SHORT).show()
             } else if (!probability.text.isDigitsOnly()) {
-                Toast.makeText(this, "Probability must number only", Toast.LENGTH_SHORT).show()
-            } else if (dfi.text.isEmpty()) {
-                Toast.makeText(this, "Damnification Increase can not be empty", Toast.LENGTH_SHORT).show()
-            } else if (!dfi.text.isDigitsOnly()) {
-                Toast.makeText(this, "Damnification Increase must number only", Toast.LENGTH_SHORT).show()
-            } else if (size.text.isEmpty()) {
-                Toast.makeText(this, "Size can not be empty", Toast.LENGTH_SHORT).show()
-            } else if (!size.text.isDigitsOnly()) {
-                Toast.makeText(this, "Size must number only", Toast.LENGTH_SHORT).show()
-            } else if (capacity.text.isEmpty()) {
-                Toast.makeText(this, "Capacity can not be empty", Toast.LENGTH_SHORT).show()
-            } else if (!capacity.text.isDigitsOnly()) {
-                Toast.makeText(this, "Capacity must number only", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "probability must number only", Toast.LENGTH_SHORT).show()
+            } else if (multiPlay.text.isEmpty()) {
+                Toast.makeText(this, "multiPlay can not be empty", Toast.LENGTH_SHORT).show()
+            } else if (!multiPlay.text.isDigitsOnly()) {
+                Toast.makeText(this, "multiPlay must number only", Toast.LENGTH_SHORT).show()
             } else if (stopLose.text.isEmpty()) {
-                Toast.makeText(this, "StopLose can not be empty", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "stopLose can not be empty", Toast.LENGTH_SHORT).show()
             } else if (!stopLose.text.isDigitsOnly()) {
-                Toast.makeText(this, "StopLose must number only", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "stopLose must number only", Toast.LENGTH_SHORT).show()
             } else if (target.text.isEmpty()) {
-                Toast.makeText(this, "Target can not be empty", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "target can not be empty", Toast.LENGTH_SHORT).show()
             } else if (!target.text.isDigitsOnly()) {
-                Toast.makeText(this, "Target must number only", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "target must number only", Toast.LENGTH_SHORT).show()
             } else {
-                onBot()
+                basePayIn = size.text.toString().toBigDecimal()
+                targetBalanceValue =
+                    balanceTextView.text.toString().toDouble() + ((balanceTextView.text.toString().toDouble() * target.text.toString().toInt()) / 100)
+                bot()
             }
         }
 
         stopButton.setOnClickListener {
-            anyChartView.requestFocus()
-            username.requestFocus()
             onStop = true
             onStopBotMode()
         }
+    }
+
+    @SuppressLint("SetTextI18n")
+    private fun bot() {
+        onBotMode()
+        val loop = 30
+        val session = user.sessionDoge
+        val seed = format.format((0..99999).random())
+        var lose = false
+        var multiPlayValue = BigDecimal(multiPlay.text.toString())
+        val height = BigDecimal(probability.text.toString()) * BigDecimal(10000)
+        if ((BigDecimal(balanceTextView.text.toString()) * BigDecimal(0.00000001)) < ((BigDecimal(balanceTextView.text.toString()) * BigDecimal(
+                0.00000001
+            )) - BigDecimal(stopLose.text.toString()))
+        ) {
+            targetBalance.text = "Stop Lose"
+            onStopBotMode()
+        } else {
+            if (lose) {
+                multiPlayValue *= BigDecimal(multiPlay.text.toString())
+                lose = false
+            } else {
+                multiPlayValue = BigDecimal(1)
+            }
+            val sendBasePayIn = (basePayIn * multiPlayValue) * BigDecimal(100000000)
+            response =
+                BotController.ManualBot(session, height.toString(), sendBasePayIn.toString(), seed).execute().get()
+            println(response)
+            try {
+                val payInResponse = (-basePayIn.toDouble())
+                val payOutResponse = response["PayOut"].toString().toDouble()
+                val profitResponse = payOutResponse + payInResponse
+                val balance = response["StartingBalance"].toString().toDouble()
+                val jsonObject = JSONObject()
+                jsonObject.put("value", (balance + profitResponse) * 0.00000001)
+                set.append(jsonObject.toString())
+                balanceTextView.text = formatLot.format((balance + profitResponse) * 0.00000001)
+                lose = profitResponse < 0
+                if (balanceTextView.text.toString().toBigDecimal() > targetBalanceValue.toBigDecimal()) {
+//                    this.cancel()
+                    onStopBotMode()
+                }
+                if (row >= loop) {
+                    set.remove(0)
+                }
+                row++
+            } catch (e: Exception) {
+                e.printStackTrace()
+                Toast.makeText(applicationContext, "Invalid request", Toast.LENGTH_SHORT).show()
+//                this.cancel()
+                onStopBotMode()
+            }
+        }
+//        Timer().schedule(1000, 1000) {
+//
+//        }
     }
 
     private fun configChart() {
@@ -179,91 +236,12 @@ class CustomActivity : AppCompatActivity() {
         cartesian.legend().padding(0.0)
     }
 
-    private fun onBot() {
-        onBotMode()
-        val loop = 30
-        val seed = format.format((0..99999).random())
-        val session = user.sessionDoge
-        var basePayIn = format.format(BigDecimal(size.text.toString()) * BigDecimal(100000000)).toBigDecimal()
-        val basePayInMirror = basePayIn
-        val increaseOnLosePercent = BigDecimal(dfi.text.toString()) * BigDecimal(0.01)
-        val maxBet = BigDecimal(capacity.text.toString())
-        val probability = BigDecimal(probability.text.toString())
-        var maxPayIn = BigDecimal(stopLose.text.toString())
-        val maxPayInMirror = maxPayIn
-        var lose = 0
-
-        Timer().schedule(1000, 1000) {
-            if (onStop) {
-                this.cancel()
-                onStopBotMode()
-            }
-            runOnUiThread {
-                try {
-                    if (lose > 0) {
-                        basePayIn *= BigDecimal(10)
-                        maxPayIn *= BigDecimal(10)
-                        lose--
-                    } else {
-                        basePayIn = basePayInMirror
-                        maxPayIn = maxPayInMirror
-                    }
-                    if (balance.text.toString().toBigDecimal() > targetBalanceValue.toBigDecimal()) {
-                        this.cancel()
-                        row = 0
-                        onStopBotMode()
-                    }
-                    response = BotController.CustomBot(
-                        session,
-                        format.format(basePayIn).toString(),
-                        maxPayIn.toString(),
-                        seed,
-                        maxBet.toString(),
-                        "0",
-                        probability.toString(),
-                        formatDouble.format(increaseOnLosePercent).toString()
-                    ).execute().get()
-                    println(response)
-                    val responsePayIn = response["PayIn"].toString().toBigDecimal()
-                    val responsePayOut = response["PayOut"].toString().toBigDecimal()
-                    val responseProfit = (responsePayOut + responsePayIn)
-                    val responseBalance =
-                        balance.text.toString().toBigDecimal() + (responseProfit * (0.00000001).toBigDecimal())
-                    val jsonObject = JSONObject()
-                    jsonObject.put(
-                        "value",
-                        formatDouble.format(responseBalance)
-                    )
-                    set.append(jsonObject.toString())
-                    balance.text = formatLot.format(responseBalance)
-                    when {
-                        responseProfit < (0).toBigDecimal() -> {
-                            lose = 2
-                        }
-                    }
-                    when {
-                        row > loop -> {
-                            set.remove(0)
-                        }
-                    }
-                    row++
-                } catch (e: Exception) {
-                    e.printStackTrace()
-                    this.cancel()
-                    onStopBotMode()
-                }
-            }
-        }
-    }
-
     private fun onBotMode() {
         runOnUiThread {
             starterLinearLayout.visibility = View.INVISIBLE
             startButton.visibility = View.INVISIBLE
             probability.isEnabled = false
-            dfi.isEnabled = false
-            size.isEnabled = false
-            capacity.isEnabled = false
+            multiPlay.isEnabled = false
             stopLose.isEnabled = false
             target.isEnabled = false
         }
@@ -274,9 +252,7 @@ class CustomActivity : AppCompatActivity() {
             starterLinearLayout.visibility = View.VISIBLE
             startButton.visibility = View.VISIBLE
             probability.isEnabled = true
-            dfi.isEnabled = true
-            size.isEnabled = true
-            capacity.isEnabled = true
+            multiPlay.isEnabled = true
             stopLose.isEnabled = true
             target.isEnabled = true
         }

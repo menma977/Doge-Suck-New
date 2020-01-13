@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-            xmlns:app="http://schemas.android.com/apk/res-auto"
-            xmlns:tools="http://schemas.android.com/tools"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@color/Black"
-            tools:context=".content.bot.CustomActivity">
+<ScrollView
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/Black"
+        tools:context=".content.bot.MartiAngelActivity">
 
     <LinearLayout
+            android:orientation="vertical"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:layout_height="wrap_content">
 
         <com.anychart.AnyChartView
                 android:id="@+id/chart"
@@ -53,13 +53,12 @@
 
         <LinearLayout
                 android:id="@+id/starterLinearLayout"
+                android:orientation="vertical"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
                 android:layout_margin="20dp"
-                android:orientation="vertical">
+                android:layout_height="wrap_content">
 
             <TextView
-                    android:id="@+id/percentTextView"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:labelFor="@id/percentEditText"
@@ -81,7 +80,6 @@
                         android:ems="10"
                         android:importantForAutofill="no"
                         android:inputType="numberDecimal"
-                        android:labelFor="@id/percentTextView"
                         android:maxLength="3"
                         android:textAlignment="center"
                         android:textColor="@color/textPrimary"
@@ -101,42 +99,29 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:labelFor="@id/percentEditText"
-                    android:text="@string/damnification_increase"
+                    android:text="@string/multy_play"
                     android:textAlignment="center"
                     android:textColor="@color/textPrimary"/>
 
-            <LinearLayout
+            <EditText
+                    android:id="@+id/multiPlayEditText"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal">
-
-                <EditText
-                        android:id="@+id/dfiEditText"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:backgroundTint="@color/Danger"
-                        android:ems="10"
-                        android:importantForAutofill="no"
-                        android:inputType="numberDecimal"
-                        android:labelFor="@id/percentTextView"
-                        android:maxLength="3"
-                        android:textAlignment="center"
-                        android:textColor="@color/textPrimary"
-                        android:textColorHint="@color/textSecondary"/>
-
-                <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="0.1"
-                        android:text="@string/percent"
-                        android:textColor="@color/textPrimary"/>
-
-            </LinearLayout>
+                    android:backgroundTint="@color/Danger"
+                    android:ems="10"
+                    android:importantForAutofill="no"
+                    android:inputType="numberDecimal"
+                    android:labelFor="@id/percentTextView"
+                    android:maxLength="3"
+                    android:textAlignment="center"
+                    android:textColor="@color/textPrimary"
+                    android:textColorHint="@color/textSecondary"
+                    tools:ignore="LabelFor"/>
 
             <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:labelFor="@id/percentEditText"
                     android:text="@string/size"
                     android:textAlignment="center"
                     android:textColor="@color/textPrimary"/>
@@ -150,33 +135,16 @@
                     android:importantForAutofill="no"
                     android:inputType="numberDecimal"
                     android:labelFor="@id/percentTextView"
+                    android:maxLength="3"
                     android:textAlignment="center"
                     android:textColor="@color/textPrimary"
-                    android:textColorHint="@color/textSecondary"/>
+                    android:textColorHint="@color/textSecondary"
+                    tools:ignore="LabelFor"/>
 
             <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/capacity"
-                    android:textAlignment="center"
-                    android:textColor="@color/textPrimary"/>
-
-            <EditText
-                    android:id="@+id/capacityEditText"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:backgroundTint="@color/Danger"
-                    android:ems="10"
-                    android:importantForAutofill="no"
-                    android:inputType="numberDecimal"
-                    android:labelFor="@id/percentTextView"
-                    android:textAlignment="center"
-                    android:textColor="@color/textPrimary"
-                    android:textColorHint="@color/textSecondary"/>
-
-            <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:labelFor="@id/percentEditText"
                     android:text="@string/stop_lose"
                     android:textAlignment="center"
                     android:textColor="@color/textPrimary"/>
@@ -189,10 +157,11 @@
                     android:ems="10"
                     android:importantForAutofill="no"
                     android:inputType="numberDecimal"
-                    android:labelFor="@id/percentTextView"
+                    android:maxLength="3"
                     android:textAlignment="center"
                     android:textColor="@color/textPrimary"
-                    android:textColorHint="@color/textSecondary"/>
+                    android:textColorHint="@color/textSecondary"
+                    tools:ignore="LabelFor"/>
 
             <TextView
                     android:layout_width="match_parent"
@@ -213,15 +182,15 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:backgroundTint="@color/Danger"
-                        android:digits="1234567"
                         android:ems="10"
+                        android:digits="1234567"
                         android:importantForAutofill="no"
                         android:inputType="numberDecimal"
-                        android:labelFor="@id/percentTextView"
                         android:maxLength="3"
                         android:textAlignment="center"
                         android:textColor="@color/textPrimary"
-                        android:textColorHint="@color/textSecondary"/>
+                        android:textColorHint="@color/textSecondary"
+                        tools:ignore="LabelFor"/>
 
                 <TextView
                         android:layout_width="0dp"
@@ -232,31 +201,31 @@
 
             </LinearLayout>
 
-        </LinearLayout>
-
-        <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:orientation="horizontal">
-
-            <Button
-                    android:id="@+id/StarterButton"
-                    android:layout_width="0dp"
+            <LinearLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_margin="10dp"
-                    android:layout_weight="1"
-                    android:background="@drawable/button_danger"
-                    android:text="@string/suck"/>
+                    android:gravity="center"
+                    android:orientation="horizontal">
 
-            <Button
-                    android:id="@+id/StopButton"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="10dp"
-                    android:layout_weight="1"
-                    android:background="@drawable/button_danger"
-                    android:text="@string/stop"/>
+                <Button
+                        android:id="@+id/StarterButton"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="10dp"
+                        android:layout_weight="1"
+                        android:background="@drawable/button_danger"
+                        android:text="@string/suck"/>
+
+                <Button
+                        android:id="@+id/StopButton"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="10dp"
+                        android:layout_weight="1"
+                        android:background="@drawable/button_danger"
+                        android:text="@string/stop"/>
+
+            </LinearLayout>
 
         </LinearLayout>
 

@@ -113,6 +113,7 @@ class BotController {
                 body["Compact"] = "1"
                 body["ClientSeed"] = seed
                 body["Currency"] = "doge"
+                body["ProtocolVersion"] = "2"
 
                 // Send post request
                 httpURLConnection.doOutput = true
@@ -148,14 +149,13 @@ class BotController {
     class CustomBot(
         private var session: String,
         private var basePayIn: String,
-        private var probabilty: String,
         private var maxPayIn: String,
         private var seed: String,
         private var maxBait: String = "200",
         private var low: String = "0",
-        private var high: String = "499999"
-    ) :
-        AsyncTask<Void, Void, JSONObject>() {
+        private var high: String = "499999",
+        private var increaseOnLosePercent: String = "1"
+    ) : AsyncTask<Void, Void, JSONObject>() {
         override fun doInBackground(vararg params: Void?): JSONObject {
             try {
                 val userAgent = "Mozilla/5.0"
@@ -177,7 +177,7 @@ class BotController {
                 body["ResetOnWin"] = "1"
                 body["ResetOnLose"] = "0"
                 body["IncreaseOnWinPercent"] = "0"
-                body["IncreaseOnLosePercent"] = "1"
+                body["IncreaseOnLosePercent"] = increaseOnLosePercent
                 body["MaxPayIn"] = maxPayIn
                 body["ResetOnLoseMaxBet"] = "1"
                 body["StopOnLoseMaxBet"] = "0"
@@ -187,6 +187,7 @@ class BotController {
                 body["Compact"] = "1"
                 body["ClientSeed"] = seed
                 body["Currency"] = "doge"
+                body["ProtocolVersion"] = "2"
 
                 // Send post request
                 httpURLConnection.doOutput = true
@@ -202,10 +203,7 @@ class BotController {
 
                 val responseCode = httpURLConnection.responseCode
                 return if (responseCode == 200) {
-                    val input = BufferedReader(
-                        InputStreamReader(httpURLConnection.inputStream)
-                    )
-
+                    val input = BufferedReader(InputStreamReader(httpURLConnection.inputStream))
                     val inputData: String = input.readLine()
                     val response = JSONObject(inputData)
                     input.close()
