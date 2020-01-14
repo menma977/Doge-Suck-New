@@ -12,6 +12,7 @@ import com.dogesuck.controller.UserController
 import com.dogesuck.model.Loading
 import com.dogesuck.model.User
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import kotlinx.android.synthetic.main.activity_home.*
 import org.json.JSONObject
 import java.lang.Exception
 import java.text.DecimalFormat
@@ -99,6 +100,16 @@ class HomeActivity : AppCompatActivity() {
             } else {
                 closeFAB()
             }
+        }
+
+        getWalletFAB.setOnClickListener {
+            goTo = Intent(this, WalletActivity::class.java)
+            startActivity(goTo)
+        }
+
+        fabWithdraw.setOnClickListener {
+            goTo = Intent(this, WithdrawActivity::class.java)
+            startActivity(goTo)
         }
 
         Timer().schedule(500) {

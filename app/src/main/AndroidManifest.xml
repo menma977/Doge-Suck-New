@@ -11,16 +11,25 @@
             android:roundIcon="@mipmap/ic_launcher_round"
             android:supportsRtl="true"
             android:theme="@style/AppTheme">
+        <activity android:name=".content.WithdrawActivity">
+        </activity>
         <activity
-                android:label="Marti Angle"
-                android:name=".content.bot.MartiAngelActivity">
+                android:name=".content.WalletActivity"
+                android:label="@string/deposit">
+            <meta-data
+                    android:name="android.support.PARENT_ACTIVITY"
+                    android:value=".content.HomeActivity"/>
+        </activity>
+        <activity
+                android:name=".content.bot.MartiAngelActivity"
+                android:label="Marti Angle">
             <meta-data
                     android:name="android.support.PARENT_ACTIVITY"
                     android:value=".content.HomeActivity"/>
         </activity>
         <activity
                 android:name=".content.bot.CustomActivity"
-                android:label="Provider A Custom 2">
+                android:label="Classic 2">
             <meta-data
                     android:name="android.support.PARENT_ACTIVITY"
                     android:value=".content.HomeActivity"/>

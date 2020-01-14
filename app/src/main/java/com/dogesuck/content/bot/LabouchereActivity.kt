@@ -93,7 +93,7 @@ class LabouchereActivity : AppCompatActivity() {
 
         Timer().schedule(1000) {
             response =
-                    UserController.GetBalance(user.usernameDoge, user.passwordDoge).execute().get()
+                UserController.GetBalance(user.usernameDoge, user.passwordDoge).execute().get()
             runOnUiThread {
                 try {
                     val balanceResponse = response.getJSONObject("Doge")["Balance"].toString()
@@ -104,16 +104,16 @@ class LabouchereActivity : AppCompatActivity() {
                         targetBalance.text = targetBalanceValue.toString()
                         val jsonObject = JSONObject()
                         jsonObject.put(
-                                "value",
-                                formatDouble.format(balanceResponse.toDouble() * 0.00000001)
+                            "value",
+                            formatDouble.format(balanceResponse.toDouble() * 0.00000001)
                         )
                         set.append(jsonObject.toString())
                         loading.closeDialog()
                     } else {
                         Toast.makeText(
-                                applicationContext,
-                                "your balance is not enough to do the bot",
-                                Toast.LENGTH_LONG
+                            applicationContext,
+                            "your balance is not enough to do the bot",
+                            Toast.LENGTH_LONG
                         ).show()
                         loading.closeDialog()
                         finishAndRemoveTask()
@@ -121,9 +121,9 @@ class LabouchereActivity : AppCompatActivity() {
                 } catch (e: Exception) {
                     e.printStackTrace()
                     Toast.makeText(
-                            applicationContext,
-                            "Your connection has been lost. Please come back when the connection is stable",
-                            Toast.LENGTH_LONG
+                        applicationContext,
+                        "Your connection has been lost. Please come back when the connection is stable",
+                        Toast.LENGTH_LONG
                     ).show()
                     loading.closeDialog()
                     finishAndRemoveTask()
@@ -142,10 +142,10 @@ class LabouchereActivity : AppCompatActivity() {
             } else {
                 payIn = Config().getLabor(balance.text.toString().toDouble() * 0.00000001)
                 basePayInValue =
-                        Config().getOnPercentValue((balance.text.toString().toDouble() * 0.00000001))
-                                .toBigDecimal()
+                    Config().getOnPercentValue((balance.text.toString().toDouble() * 0.00000001))
+                        .toBigDecimal()
                 targetBalanceValue =
-                        balance.text.toString().toDouble() + ((balance.text.toString().toDouble() * percent.text.toString().toInt()) / 100)
+                    balance.text.toString().toDouble() + ((balance.text.toString().toDouble() * percent.text.toString().toInt()) / 100)
                 maxPayInValue = (basePayInValue * (1000).toBigDecimal())
                 targetBalance.text = formatLot.format(targetBalanceValue)
                 labour.add(payIn)
@@ -190,22 +190,22 @@ class LabouchereActivity : AppCompatActivity() {
                     arrayText.text = labour.toString()
                     val pay = payIn * 100000000
                     response = BotController.ClassicBot(
-                            session,
-                            format.format(pay),
-                            maxPayInValue.toString(),
-                            seed,
-                            "1"
+                        session,
+                        format.format(pay),
+                        maxPayInValue.toString(),
+                        seed,
+                        "1"
                     ).execute().get()
 
                     val responsePayIn = response["PayIn"].toString().toBigDecimal()
                     val responsePayOut = response["PayOut"].toString().toBigDecimal()
                     val responseProfit = (responsePayOut + responsePayIn)
                     val responseBalance =
-                            balance.text.toString().toBigDecimal() + (responseProfit * (0.00000001).toBigDecimal())
+                        balance.text.toString().toBigDecimal() + (responseProfit * (0.00000001).toBigDecimal())
                     val jsonObject = JSONObject()
                     jsonObject.put(
-                            "value",
-                            formatDouble.format(responseBalance)
+                        "value",
+                        formatDouble.format(responseBalance)
                     )
                     set.append(jsonObject.toString())
                     balance.text = formatLot.format(responseBalance)
@@ -225,7 +225,6 @@ class LabouchereActivity : AppCompatActivity() {
                 row++
             } catch (e: Exception) {
                 e.printStackTrace()
-                println(e)
                 this.cancel()
                 runOnUiThread {
                     starterLinearLayout.visibility = View.VISIBLE
@@ -245,7 +244,7 @@ class LabouchereActivity : AppCompatActivity() {
         val series1: Line = cartesian.line(series1Mapping)
         series1.name("Balance")
         series1.hovered().markers().enabled(true)
-        series1.stroke("tomato")
+        series1.stroke("#DD0A0A")
 
         cartesian.legend().enabled(true)
         cartesian.legend().fontSize(13.0)

@@ -72,11 +72,17 @@ class CustomActivity : AppCompatActivity() {
         balance = findViewById(R.id.balanceTextView)
         targetBalance = findViewById(R.id.targetTextView)
         probability = findViewById(R.id.probabilityEditText)
+        probability.setText("50")
         dfi = findViewById(R.id.dfiEditText)
+        dfi.setText("100")
         size = findViewById(R.id.sizeEditText)
+        size.setText("0.1")
         capacity = findViewById(R.id.capacityEditText)
+        capacity.setText("200")
         stopLose = findViewById(R.id.stopLoseEditText)
+        stopLose.setText("100")
         target = findViewById(R.id.targetEditText)
+        target.setText("1")
         startButton = findViewById(R.id.StarterButton)
         stopButton = findViewById(R.id.StopButton)
         starterLinearLayout = findViewById(R.id.starterLinearLayout)
@@ -135,8 +141,6 @@ class CustomActivity : AppCompatActivity() {
                 Toast.makeText(this, "Damnification Increase must number only", Toast.LENGTH_SHORT).show()
             } else if (size.text.isEmpty()) {
                 Toast.makeText(this, "Size can not be empty", Toast.LENGTH_SHORT).show()
-            } else if (!size.text.isDigitsOnly()) {
-                Toast.makeText(this, "Size must number only", Toast.LENGTH_SHORT).show()
             } else if (capacity.text.isEmpty()) {
                 Toast.makeText(this, "Capacity can not be empty", Toast.LENGTH_SHORT).show()
             } else if (!capacity.text.isDigitsOnly()) {
@@ -150,6 +154,9 @@ class CustomActivity : AppCompatActivity() {
             } else if (!target.text.isDigitsOnly()) {
                 Toast.makeText(this, "Target must number only", Toast.LENGTH_SHORT).show()
             } else {
+                targetBalanceValue =
+                    balance.text.toString().toDouble() + ((balance.text.toString().toDouble() * target.text.toString().toDouble()) / 100)
+                targetBalance.text = targetBalanceValue.toString()
                 onBot()
             }
         }
@@ -172,7 +179,7 @@ class CustomActivity : AppCompatActivity() {
         val series1: Line = cartesian.line(series1Mapping)
         series1.name("Balance")
         series1.hovered().markers().enabled(true)
-        series1.stroke("tomato")
+        series1.stroke("#DD0A0A")
 
         cartesian.legend().enabled(true)
         cartesian.legend().fontSize(13.0)
@@ -188,8 +195,8 @@ class CustomActivity : AppCompatActivity() {
         val basePayInMirror = basePayIn
         val increaseOnLosePercent = BigDecimal(dfi.text.toString()) * BigDecimal(0.01)
         val maxBet = BigDecimal(capacity.text.toString())
-        val probability = BigDecimal(probability.text.toString())
-        var maxPayIn = BigDecimal(stopLose.text.toString())
+        val probability = BigDecimal(probability.text.toString()) * BigDecimal(10000)
+        var maxPayIn = BigDecimal(stopLose.text.toString() + "00000000")
         val maxPayInMirror = maxPayIn
         var lose = 0
 

@@ -41,6 +41,11 @@ class BotController {
                 body["ClientSeed"] = seed
                 body["Currency"] = "doge"
 
+                println(body.toString()
+                    .replace(", ", "&")
+                    .replace("{", "")
+                    .replace("}", ""))
+
                 // Send post request
                 httpURLConnection.doOutput = true
                 val write = DataOutputStream(httpURLConnection.outputStream)
@@ -151,10 +156,10 @@ class BotController {
         private var basePayIn: String,
         private var maxPayIn: String,
         private var seed: String,
-        private var maxBait: String = "200",
-        private var low: String = "0",
-        private var high: String = "499999",
-        private var increaseOnLosePercent: String = "1"
+        private var maxBait: String,
+        private var low: String,
+        private var high: String,
+        private var increaseOnLosePercent: String
     ) : AsyncTask<Void, Void, JSONObject>() {
         override fun doInBackground(vararg params: Void?): JSONObject {
             try {
@@ -203,7 +208,10 @@ class BotController {
 
                 val responseCode = httpURLConnection.responseCode
                 return if (responseCode == 200) {
-                    val input = BufferedReader(InputStreamReader(httpURLConnection.inputStream))
+                    val input = BufferedReader(
+                        InputStreamReader(httpURLConnection.inputStream)
+                    )
+
                     val inputData: String = input.readLine()
                     val response = JSONObject(inputData)
                     input.close()

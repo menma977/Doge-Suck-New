@@ -73,10 +73,15 @@ class MartiAngelActivity : AppCompatActivity() {
         balanceTextView = findViewById(R.id.balanceTextView)
         targetBalance = findViewById(R.id.targetTextView)
         probability = findViewById(R.id.probabilityEditText)
+        probability.setText("50")
         multiPlay = findViewById(R.id.multiPlayEditText)
+        multiPlay.setText("2")
         stopLose = findViewById(R.id.stopLoseEditText)
+        stopLose.setText("1000")
         target = findViewById(R.id.targetEditText)
+        target.setText("1")
         size = findViewById(R.id.sizeEditText)
+        size.setText("0.1")
         startButton = findViewById(R.id.StarterButton)
         stopButton = findViewById(R.id.StopButton)
 
@@ -153,6 +158,7 @@ class MartiAngelActivity : AppCompatActivity() {
                 basePayIn = size.text.toString().toBigDecimal()
                 targetBalanceValue =
                     balanceTextView.text.toString().toDouble() + ((balanceTextView.text.toString().toDouble() * target.text.toString().toInt()) / 100)
+                targetBalance.text = targetBalanceValue.toString()
                 bot()
             }
         }
@@ -172,51 +178,60 @@ class MartiAngelActivity : AppCompatActivity() {
         var lose = false
         var multiPlayValue = BigDecimal(multiPlay.text.toString())
         val height = BigDecimal(probability.text.toString()) * BigDecimal(10000)
-        if ((BigDecimal(balanceTextView.text.toString()) * BigDecimal(0.00000001)) < ((BigDecimal(balanceTextView.text.toString()) * BigDecimal(
-                0.00000001
-            )) - BigDecimal(stopLose.text.toString()))
-        ) {
-            targetBalance.text = "Stop Lose"
-            onStopBotMode()
-        } else {
-            if (lose) {
-                multiPlayValue *= BigDecimal(multiPlay.text.toString())
-                lose = false
-            } else {
-                multiPlayValue = BigDecimal(1)
-            }
-            val sendBasePayIn = (basePayIn * multiPlayValue) * BigDecimal(100000000)
-            response =
-                BotController.ManualBot(session, height.toString(), sendBasePayIn.toString(), seed).execute().get()
-            println(response)
-            try {
-                val payInResponse = (-basePayIn.toDouble())
-                val payOutResponse = response["PayOut"].toString().toDouble()
-                val profitResponse = payOutResponse + payInResponse
-                val balance = response["StartingBalance"].toString().toDouble()
-                val jsonObject = JSONObject()
-                jsonObject.put("value", (balance + profitResponse) * 0.00000001)
-                set.append(jsonObject.toString())
-                balanceTextView.text = formatLot.format((balance + profitResponse) * 0.00000001)
-                lose = profitResponse < 0
-                if (balanceTextView.text.toString().toBigDecimal() > targetBalanceValue.toBigDecimal()) {
-//                    this.cancel()
+        Timer().schedule(1000, 1000) {
+            runOnUiThread {
+                if (onStop) {
+                    this.cancel()
+                }
+                if ((BigDecimal(balanceTextView.text.toString()) * BigDecimal(0.00000001))
+                    < ((BigDecimal(balanceTextView.text.toString()) * BigDecimal(0.00000001))
+                            - BigDecimal(stopLose.text.toString()))
+                ) {
+                    targetBalance.text = "Stop Lose"
                     onStopBotMode()
+                } else {
+                    if (lose) {
+                        multiPlayValue *= BigDecimal(multiPlay.text.toString())
+                        lose = false
+                    } else {
+                        multiPlayValue = BigDecimal(1)
+                    }
+                    val sendBasePayIn = (basePayIn * multiPlayValue) * BigDecimal(100000000)
+                    response = BotController.ManualBot(
+                        session,
+                        height.toString(),
+                        format.format(sendBasePayIn).toString(),
+                        seed,
+                        "0"
+                    ).execute().get()
+                    println(response)
+                    try {
+                        val payInResponse = (-basePayIn.toDouble())
+                        val payOutResponse = response["PayOut"].toString().toDouble()
+                        val profitResponse = payOutResponse + payInResponse
+                        val balance = response["StartingBalance"].toString().toDouble()
+                        val jsonObject = JSONObject()
+                        jsonObject.put("value", (balance + profitResponse) * 0.00000001)
+                        set.append(jsonObject.toString())
+                        balanceTextView.text = formatLot.format((balance + profitResponse) * 0.00000001)
+                        lose = profitResponse < 0
+                        if (balanceTextView.text.toString().toBigDecimal() > targetBalanceValue.toBigDecimal()) {
+                            this.cancel()
+                            onStopBotMode()
+                        }
+                        if (row >= loop) {
+                            set.remove(0)
+                        }
+                        row++
+                    } catch (e: Exception) {
+                        e.printStackTrace()
+                        Toast.makeText(applicationContext, "Invalid request", Toast.LENGTH_SHORT).show()
+                        this.cancel()
+                        onStopBotMode()
+                    }
                 }
-                if (row >= loop) {
-                    set.remove(0)
-                }
-                row++
-            } catch (e: Exception) {
-                e.printStackTrace()
-                Toast.makeText(applicationContext, "Invalid request", Toast.LENGTH_SHORT).show()
-//                this.cancel()
-                onStopBotMode()
             }
         }
-//        Timer().schedule(1000, 1000) {
-//
-//        }
     }
 
     private fun configChart() {
@@ -229,7 +244,7 @@ class MartiAngelActivity : AppCompatActivity() {
         val series1: Line = cartesian.line(series1Mapping)
         series1.name("Balance")
         series1.hovered().markers().enabled(true)
-        series1.stroke("tomato")
+        series1.stroke("#DD0A0A")
 
         cartesian.legend().enabled(true)
         cartesian.legend().fontSize(13.0)

@@ -100,12 +100,20 @@ class ClassicActivity : AppCompatActivity() {
                         targetBalance.text = targetBalanceValue.toString()
                         loading.closeDialog()
                     } else {
-                        Toast.makeText(applicationContext, "your balance is not enough to do the bot", Toast.LENGTH_LONG).show()
+                        Toast.makeText(
+                            applicationContext,
+                            "your balance is not enough to do the bot",
+                            Toast.LENGTH_LONG
+                        ).show()
                         loading.closeDialog()
                         finishAndRemoveTask()
                     }
                 } catch (e: Exception) {
-                    Toast.makeText(applicationContext, "Your connection has been lost. Please come back when the connection is stable", Toast.LENGTH_LONG).show()
+                    Toast.makeText(
+                        applicationContext,
+                        "Your connection has been lost. Please come back when the connection is stable",
+                        Toast.LENGTH_LONG
+                    ).show()
                     loading.closeDialog()
                     finishAndRemoveTask()
                 }
@@ -124,31 +132,31 @@ class ClassicActivity : AppCompatActivity() {
                 when (val percentage = percent.text.toString().toInt()) {
                     in 1..2 -> {
                         basePayInValue =
-                                Config().getOnPercentValue((balance.text.toString().toDouble() * 0.00000001))
-                                        .toBigDecimal()
+                            Config().getOnPercentValue((balance.text.toString().toDouble() * 0.00000001))
+                                .toBigDecimal()
                         targetBalanceValue =
-                                balance.text.toString().toDouble() + ((balance.text.toString().toDouble() * percentage) / 100)
+                            balance.text.toString().toDouble() + ((balance.text.toString().toDouble() * percentage) / 100)
                     }
                     in 2..3 -> {
                         basePayInValue =
-                                Config().getThreePercentValue((balance.text.toString().toDouble() * 0.00000001))
-                                        .toBigDecimal()
+                            Config().getThreePercentValue((balance.text.toString().toDouble() * 0.00000001))
+                                .toBigDecimal()
                         targetBalanceValue =
-                                balance.text.toString().toDouble() + ((balance.text.toString().toDouble() * percentage) / 100)
+                            balance.text.toString().toDouble() + ((balance.text.toString().toDouble() * percentage) / 100)
                     }
                     else -> {
                         basePayInValue =
-                                Config().getFivePercentValue((balance.text.toString().toDouble() * 0.00000001))
-                                        .toBigDecimal()
+                            Config().getFivePercentValue((balance.text.toString().toDouble() * 0.00000001))
+                                .toBigDecimal()
                         targetBalanceValue =
-                                balance.text.toString().toDouble() + ((balance.text.toString().toDouble() * percentage) / 100)
+                            balance.text.toString().toDouble() + ((balance.text.toString().toDouble() * percentage) / 100)
                     }
                 }
                 maxPayInValue = (basePayInValue * (1000).toBigDecimal())
                 targetBalance.text = formatLot.format(targetBalanceValue)
                 basePayInValueMirror = basePayInValue
                 maxPayInValueMirror = maxPayInValue
-
+                bot()
             }
         }
 
@@ -183,19 +191,20 @@ class ClassicActivity : AppCompatActivity() {
                     }
                     val seed = format.format((0..99999).random())
                     response = BotController.ClassicBot(
-                            user.sessionDoge,
-                            basePayInValue.toString(),
-                            maxPayInValue.toString(),
-                            seed
+                        user.sessionDoge,
+                        basePayInValue.toString(),
+                        maxPayInValue.toString(),
+                        seed
                     ).execute().get()
                     val responsePayIn = response["PayIn"].toString().toBigDecimal()
                     val responsePayOut = response["PayOut"].toString().toBigDecimal()
                     val responseProfit = (responsePayOut + responsePayIn)
-                    val responseBalance = balance.text.toString().toBigDecimal() + (responseProfit * (0.00000001).toBigDecimal())
+                    val responseBalance =
+                        balance.text.toString().toBigDecimal() + (responseProfit * (0.00000001).toBigDecimal())
                     val jsonObject = JSONObject()
                     jsonObject.put(
-                            "value",
-                            formatDouble.format(responseBalance)
+                        "value",
+                        formatDouble.format(responseBalance)
                     )
                     set.append(jsonObject.toString())
                     balance.text = formatLot.format(responseBalance)
@@ -231,7 +240,7 @@ class ClassicActivity : AppCompatActivity() {
         val series1: Line = cartesian.line(series1Mapping)
         series1.name("Balance")
         series1.hovered().markers().enabled(true)
-        series1.stroke("tomato")
+        series1.stroke("#DD0A0A")
 
         cartesian.legend().enabled(true)
         cartesian.legend().fontSize(13.0)

@@ -110,7 +110,7 @@ class UserController {
         }
     }
 
-    class GetStatus(var username: String) : AsyncTask<Void, Void, JSONObject>() {
+    class GetWallet(private var username: String) : AsyncTask<Void, Void, JSONObject>() {
         override fun doInBackground(vararg params: Void?): JSONObject {
             try {
                 val userAgent = "Mozilla/5.0"
@@ -123,9 +123,51 @@ class UserController {
                 httpURLConnection.setRequestProperty("Accept", "application/json")
 
                 val body = HashMap<String, Any>()
-                body["a"] = "CekStatus"
+                body["a"] = "DepositSuck"
                 body["username"] = username
-                body["plan"] = "A"
+
+                // Send post request
+                httpURLConnection.doOutput = true
+                val write = DataOutputStream(httpURLConnection.outputStream)
+                write.writeBytes(
+                    body.toString()
+                        .replace(", ", "&")
+                        .replace("{", "")
+                        .replace("}", "")
+                )
+                write.flush()
+                write.close()
+
+                val responseCode = httpURLConnection.responseCode
+                return if (responseCode == 200) {
+                    val input = BufferedReader(
+                        InputStreamReader(httpURLConnection.inputStream)
+                    )
+
+                    val inputData: String = input.readLine()
+                    val response = JSONObject(inputData)
+                    input.close()
+                    response
+                } else {
+                    JSONObject("{Status: 1, Pesan: '${R.string.error404}'}")
+                }
+            } catch (e: Exception) {
+                return JSONObject("{Status: 1, Pesan: '${R.string.error500}'}")
+            }
+        }
+    }
+
+    class RequestWithdraw(private val body: HashMap<String, String>) : AsyncTask<Void, Void, JSONObject>() {
+        override fun doInBackground(vararg params: Void?): JSONObject {
+            try {
+                val userAgent = "Mozilla/5.0"
+                val url = URL("${Url.getUrl()}/index.php")
+                val httpURLConnection = url.openConnection() as HttpURLConnection
+                //add request header
+                httpURLConnection.requestMethod = "POST"
+                httpURLConnection.setRequestProperty("User-Agent", userAgent)
+                httpURLConnection.setRequestProperty("Accept-Language", "en-US,en;q=0.5")
+                httpURLConnection.setRequestProperty("Accept", "application/json")
 
                 // Send post request
                 httpURLConnection.doOutput = true

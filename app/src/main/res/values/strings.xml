@@ -50,4 +50,10 @@
     <string name="damnification_increase">Damnification Increase</string>
     <string name="stop_lose">Stop Lose</string>
     <string name="multy_play">Multyply</string>
+    <string name="deposit">Deposit</string>
+    <string name="copy">Copy</string>
+    <string name="paste">Paste</string>
+    <string name="nominal">Nominal</string>
+    <string name="unique_code">Unique Code</string>
+    <string name="get_unique_code">Get Unique Code</string>
 </resources>

@@ -272,7 +272,7 @@ class ReverseLabouchereActivity : AppCompatActivity() {
         val series1: Line = cartesian.line(series1Mapping)
         series1.name("Balance")
         series1.hovered().markers().enabled(true)
-        series1.stroke("tomato")
+        series1.stroke("#DD0A0A")
 
         cartesian.legend().enabled(true)
         cartesian.legend().fontSize(13.0)

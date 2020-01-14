@@ -80,7 +80,7 @@
                         android:ems="10"
                         android:importantForAutofill="no"
                         android:inputType="numberDecimal"
-                        android:maxLength="3"
+                        android:maxLength="2"
                         android:textAlignment="center"
                         android:textColor="@color/textPrimary"
                         android:textColorHint="@color/textSecondary"
